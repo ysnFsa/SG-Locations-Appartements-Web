@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Appartements</title>
+</head>
+<body>
+    <h1>List of Appartements</h1>
+    <ul>
+        <li th:each="appartement : ${appartements}">
+            <span th:text="${appartement.type}">Type</span> - 
+            <span th:text="${appartement.surface}">Surface</span> - 
+            <span th:text="${appartement.prix}">Price</span>
+        </li>
+    </ul>
+</body>
+</html>
