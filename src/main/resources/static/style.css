@@ -1,0 +1,488 @@
+style : * {
+    box-sizing: border-box;
+    font-family: "Cairo",sans-serif;
+    margin: 0;
+    scroll-behavior: smooth;
+}
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #edf1f4;
+}
+.parent {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #d8dfd8;
+}
+.login {
+    padding: 2rem;
+    background-color: #edf1f4;
+    border-radius: 8px;
+    aspect-ratio: 16 / 9;
+    display: grid;
+    place-content: center;
+    gap: 8px;
+}
+.image-container {
+    display: grid;
+    place-content: center;
+    padding: 16px;
+}
+.image-container img {
+    max-width: 100%;
+    width: 150px;
+    height: 150px;
+}
+.image-container + div {
+    margin: 32px 16px;
+}
+.input {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-transform: capitalize;
+    margin-bottom: 16px;
+}
+.input label {
+    font-size: 14px;
+    font-weight: 600;
+}
+.input input {
+    outline: none;
+    border: none;
+    background: white;
+    padding: 10px;
+    text-transform: capitalize;
+    border-radius: 6px;
+    min-width: 230px;
+}
+body > header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+}
+ul {
+    list-style-type: none;
+}
+header nav ul {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0;
+}
+header nav li a {
+    text-decoration: none;
+    color: #C0C0C0;
+    font-size: 24px;
+    text-transform: capitalize;
+    font-weight: 600;
+}
+header nav li a.active {
+    color: black;
+}
+header .settings-icon-container img {
+    width: 45px;
+    aspect-ratio: 1 / 1;
+} 
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-size), 1fr));
+    gap: 40px;
+    border-radius: 10px;
+    padding: 16px 32px;
+}
+.appartements .appartement {
+    box-shadow: 0 2px 15px rgb(0 0 0 / 10%);
+    border-radius: 10px;
+    transition-duration: 0.5s;
+    overflow: hidden;
+    position: relative;
+}
+.appartements .appartement:hover {
+    transform: translateY(-8px);
+}
+.appartements .appartement .appartement-img-container img {
+    max-width: 100%;
+}
+.appartements .appartement .appartement-info {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    row-gap: 14px;
+    text-transform: capitalize;
+}
+.appartements .appartement .appartement-info div:nth-child(2n) {
+    text-align: right;
+}
+.appartements .appartement .appartement-info div span:first-child,.active-rents span:first-child {
+    opacity: .7;
+    font-size: 14px;
+}
+.clients
+.client-card {
+    display: flex;
+    padding: 16px;
+    border-radius: 8px;
+    background: #dad4d4;
+    gap: 16px;
+}
+.client-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 2;
+    padding-bottom: 8px;
+}
+.client-info > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.client-info button,.appartemenst-to-client button {
+    outline: none;
+    border: none;
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-content: center;
+    background-color: transparent;
+}
+.client-info button img,.appartemenst-to-client button img {
+    max-width: 100%;
+}
+.appartemenst-to-client button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.client-info .full-name {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+form {
+    position: absolute;
+    background: #edf1f4;
+    padding: 16px;
+    top: 40px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    box-shadow: 0 2px 15px rgb(0 0 0 / 10%);
+    border: 2px #aaa solid;
+    border-radius: 8px;
+}
+form .appartement-info,form .appartement-media {
+    padding: 16px;
+    background-color: white;
+    border-radius: 8px;
+}
+form .appartement-media {
+    margin: 8px 0;
+}
+form .appartement-info .appartement-info-container {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    gap: 12px;
+}
+form .appartement-info > * {
+    padding: 0 8px;
+}
+form .appartement-info > div,form .appartement-info-container > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+form .appartement-info > div label {
+    opacity: .7;
+    font-size: 14px;
+    text-transform: capitalize;
+}
+form .appartement-info > div input,form .appartement-info > div select {
+    outline: none;
+    border: none;
+    background: white;
+    padding: 10px;
+    text-transform: capitalize;
+    border-radius: 6px;
+    min-width: 230px;
+    border: 2px #eee solid;
+}
+form .appartement-info > div:nth-child(2) {
+    margin: 12px auto;
+}
+form .appartement-info textarea {
+    border: 2px #eeeeee solid;
+    border-radius: 6px;
+    padding: 8px;
+}
+form .appartement-info > div:last-child {
+    flex-direction: row;
+    justify-content: space-between;
+}
+form .appartement-info > div:last-child > div {
+    display: flex;
+    gap: 5px;
+}
+form .appartement-info > div:last-child > div input {
+    min-width: fit-content !important;
+}
+form .appartement-media label {
+    cursor: pointer;
+}
+form .appartement-media input {
+    display: none;
+}
+input[type="submit"] {
+    margin: 0 auto;
+    display: block;
+    margin-top: 16px;
+    aspect-ratio: 16 / 9;
+    text-transform: capitalize;
+    color: white;
+    border: none;
+    background-color: #6d9181;
+    border-radius: 6px;
+    padding: 0px 16px;
+    font-size: 18px;
+    cursor: pointer;
+}
+form .cancel,form .cancel span,.appartemenst-to-client .cancel,.appartemenst-to-client .cancel span {
+    border-radius: 50%;
+    /* position: absolute;
+    top: 0;
+    right: 0;
+    width: 25px;
+    height: 25px; */
+    display: grid;
+    place-content: center;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+}
+form .cancel,.appartemenst-to-client .cancel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 2px #C0C0C0 solid;
+    background-color: white;
+    width : 35px;
+    height: 35px;
+    transform: translate(50%, -50%);
+    z-index: -1;
+}
+form .cancel span,.appartemenst-to-client .cancel span {
+    background-color: red;
+    width: 25px;
+    height: 25px;
+}
+form .cancel span:hover,.appartemenst-to-client .cancel span:hover {
+    width: 30px;
+    height: 30px;
+}
+/* form .cancel::focus,.appartemenst-to-client .cancel:focus {
+    display: none;
+} */
+header + div button {
+    outline: none;
+    border: none;
+    width: 100px;
+    height: 100px;
+    display: grid;
+    place-content: center;
+    background-color: transparent;
+    margin-left: auto;
+}
+
+.appartemenst-to-client {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    background: #edf1f4;
+    padding: 30px;
+    border: 2px #C0C0C0 solid;
+    border-radius: 6px;
+    transform: translate(-50%, 0);
+    min-width: 900px;
+}
+.appartemenst-to-client .appartements {
+    padding: 0;
+}
+.add-appartement {
+    display: none;
+}
+.container {
+    display: none;
+    flex-direction: column;
+    background-color: #e9ecef;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+}
+
+.container .client-info-2 {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.container .avatar {
+    background-color: #f0a5a5;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.container .client-info-2 h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.container label {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.container input[type="text"],
+.container input[type="email"] {
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.container input[type="text"]:focus,
+.container input[type="email"]:focus {
+    outline: none;
+    border-color: #5cb85c;
+}
+
+.container .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.container .cancel-button,
+.container .update-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.container .cancel-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.container .update-button {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.container .cancel-button:hover,
+.container .update-button:hover {
+    opacity: 0.8;
+}
+
+
+
+
+
+
+
+/*#####################################################################*/
+
+.container-5u8Tz {
+    display: none;
+}
+container-5u8Tz {
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 800px;
+}
+
+.title-Q2jB7 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.section-Q2jB7 {
+    margin-bottom: 20px;
+}
+
+.row-Fk3n9 {
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-group-H7yX0 {
+    display: flex;
+    flex-direction: column;
+    width: 32%;
+}
+
+.label-H7yX0 {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.input-H7yX0 {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.input-H7yX0:focus {
+    outline: none;
+    border-color: #5cb85c;
+}
+
+.form-buttons-R2mL8 {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.assign-button-V4qK5 {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+.assign-button-V4qK5:hover {
+    opacity: 0.8;
+}
+
+.note-J3pM1 {
+    font-size: 12px;
+    color: #777;
+    margin-top: 10px;
+}

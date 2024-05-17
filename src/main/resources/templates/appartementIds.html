@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Open+Sans:wght@400;500;700&family=Roboto:wght@300&family=Work+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap"
+    rel="stylesheet">
+    <title>Les Appartements</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/appartements" class="active">Appartement</a></li>
+                <li><a href="/clients">Clients</a></li>
+            </ul>
+        </nav>
+        <div class="settings-icon-container">
+            <img th:src="@{/assets/setting.png}" alt="setting">
+        </div>
+    </header>
+    <main>
+        <div class="appartements grid" style="--grid-card-size : 250px">
+            <div th:each="appartement : ${appartements}" class="appartement">
+                <div class="appartement-img-container">
+                    <img th:src="@{/assets/appartement-img.jpg}" alt="appartement img">
+                </div>
+                <div class="appartement-info">
+                    <div>
+                        <span>prix : </span>
+                        <span th:text="${appartement.prix} + '.dh'">1500.dh</span>
+                    </div>
+                    <div>
+                        <span>surface : </span>
+                        <span th:text="${appartement.surface} + '.m²'">120.m²</span>
+                    </div>
+                    <div>
+                        <span>ville : </span>
+                        <span th:text="${appartement.ville.name}">agadir</span>
+                    </div>
+                    <div>
+                        <span>quartier : </span>
+                        <span th:text="${appartement.quartier.name}">centre</span>
+                    </div>
+                    <div>
+                        <span>chambre : </span>
+                        <span th:text="${appartement.chambres}">3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

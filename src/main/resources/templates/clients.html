@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Open+Sans:wght@400;500;700&family=Roboto:wght@300&family=Work+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap"
+    rel="stylesheet">
+    <title>Les Clients</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/appartements">Appartement</a></li>
+                <li><a href="/clients" class="active">Clients</a></li>
+            </ul>
+        </nav>
+        <div class="settings-icon-container">
+            <img th:src="@{/assets/setting.png}" alt="setting">
+        </div>
+    </header>
+    <div>
+        <button><img th:src="@{/assets/add_32inactive32.png}" alt=""></button>
+    </div>
+    <script>
+        
+        let SelectedUser=-1;
+        let SelectedUserName="";
+        let SelctedUserTele=""
+        let appId=-1;
+        let Gprix=-1;
+        let GQ="";
+        let GVille="";
+        let Gtype="";
+        let Gsurface=-1;
+        
+        
+    </script>
+    
+    <script>
+        function setOnClickHandlers() {
+            document.querySelectorAll('[data-client-id]').forEach(button => {
+                const clientId = button.getAttribute('data-client-id');
+                const clientFirstName = button.getAttribute('data-client-firstname');
+                const clientTele = button.getAttribute('data-client-tele');
+                button.onclick = () => UpdateUid(clientId, clientFirstName, clientTele);
+            });
+
+            document.querySelectorAll('[data-appartement-id]').forEach(button => {
+                const appartementId = button.getAttribute('data-appartement-id');
+                const appartementPrix = button.getAttribute('data-appartement-prix');
+                const appartementVille = button.getAttribute('data-appartement-ville');
+                const appartementQuartier = button.getAttribute('data-appartement-quartier');
+                const appartementType = button.getAttribute('data-appartement-type');
+                const appartementSurface = button.getAttribute('data-appartement-surface');
+                button.onclick = () => assign(appartementId, appartementPrix, appartementVille, appartementQuartier, appartementType, appartementSurface);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', setOnClickHandlers);
+    </script>
+    
+    
+    <div class="clients grid" style="--grid-card-size : 400px">
+        <div th:each="client : ${users}" class="client">
+            <div class="client-card">
+                <div class="client-img-container">
+                    <img th:src="@{/assets/user.png}" alt="">
+                </div>
+                <div class="client-info">
+                    <div>
+                        <div class="full-name" th:text="${client.firstName} + ' ' + ${client.lastName}">Ismail ER-RAMDANY</div>
+                        <div>
+                            
+      <button 
+    th:data-client-id="${client.id}" 
+    th:data-client-firstname="${client.firstName}" 
+    th:data-client-tele="${client.tele}">
+    <img th:src="@{/assets/add_32inactive32.png}" alt="Add">
+</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="active-rents">
+                            <span>email : </span>
+                            <span th:text="${client.email}">user@example.com</span>
+                        </div>
+                        <div class="active-rents">
+                            <span>tele : </span>
+                            <span th:text="${client.tele}">1234567890</span>
+                        </div>
+                        <div class="active-rents">
+                            <span>addresse : </span>
+                            <span th:text="${client.addresse}">123 Main St</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="appartemenst-to-client">
+        <span class="cancel"><span>X</span></span>
+        <div class="appartements grid" style="--grid-card-size : 250px">
+            <div th:each="appartement : ${appartements}" class="appartement">
+                <div class="appartement-img-container">
+                    <img th:src="@{/assets/appartement-img.jpg}" alt="appartement img">
+                </div>
+                <div class="appartement-info">
+                    <div>
+                        <span>prix : </span>
+                        <span th:text="${appartement.prix} + '.dh'">1500.dh</span>
+                    </div>
+                    <div>
+                        <span>surface : </span>
+                        <span th:text="${appartement.surface} + '.m²'">120.m²</span>
+                    </div>
+                    <div>
+                        <span>ville : </span>
+                        <span th:text="${appartement.ville.name}">agadir</span>
+                    </div>
+                    <div>
+                        <span>chambre : </span>
+                        <span th:text="${appartement.chambres}">3</span>
+                    </div>
+                </div>
+                <div>
+                  <button 
+    th:data-appartement-id="${appartement.id}" 
+    th:data-appartement-prix="${appartement.prix}" 
+    th:data-appartement-ville="${appartement.ville.name}" 
+    th:data-appartement-quartier="${appartement.quartier.name}" 
+    th:data-appartement-type="${appartement.type}" 
+    th:data-appartement-surface="${appartement.surface}">
+    <img th:src="@{/assets/add_32inactive32.png}" alt="Add">
+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form action="#" id="add-client" class="container">
+        <span class="cancel"><span>X</span></span>
+        <label for="firstName">FirstName</label>
+        <input type="text" id="firstName" name="firstName" value="Fatima Ezzahra">
+
+        <label for="lastName">LastName</label>
+        <input type="text" id="lastName" name="lastName" value="BOULOUIZ">
+
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" name="phone" value="0631077311">
+
+        <label for="address">Adresse</label>
+        <input type="text" id="address" name="address" value="attadamone">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="fz.blz.2019@gmail.com">
+
+        <div class="form-buttons">
+            <button type="button" class="cancel-button" style="display: none;">Cancel</button>
+            <button type="button" class="update-button">Update</button>
+        </div>
+    </form>
+    
+    
+    <form class="assign-appartemenst-to-client container">
+        <span class="cancel"><span>X</span></span>
+        <label for="firstName">FirstName</label>
+        <input disabled type="text" id="firstName" name="firstName" value="Fatima Ezzahra">
+
+        <label for="lastName">LastName</label>
+        <input disabled type="text" id="lastName" name="lastName" value="BOULOUIZ">
+
+        <label for="phone">Phone</label>
+        <input disabled type="text" id="phone" name="phone" value="0631077311">
+
+        <label for="address">Adresse</label>
+        <input disabled type="text" id="address" name="address" value="attadamone">
+
+        <label for="email">Email</label>
+        <input disabled type="email" id="email" name="email" value="fz.blz.2019@gmail.com">
+
+        <label for="prix">prix</label>
+        <input disabled type="text" id="prix" name="prix" value="234">
+        
+        <label for="surface">surface</label>
+        <input disabled type="text" id="surface" name="surface" value="80">
+
+        <label for="ville">ville</label>
+        <input disabled type="text" id="ville" name="ville" value="dakhla">
+
+        <label for="chambre">chambre</label>
+        <input disabled type="text" id="chambre" name="chambre" value="3">
+
+        <label for="from">from</label>
+        <input type="date" name="from" id="from">
+
+        <label for="from">from</label>
+        <input type="date" name="from" id="from">
+
+        <div class="form-buttons">
+            <button type="submit" class="update-button">Update</button>
+        </div>
+    </form>
+    
+    <!-- ******************************** assign form ********************************** -->
+    
+    <div class="container-5u8Tz container">
+        <form action="#">
+            <div class="section-Q2jB7">
+                <h3 class="title-Q2jB7">Client info :</h3>
+                <div class="row-Fk3n9">
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="clientID-F6pV9">Client ID</label>
+                        <input class="input-H7yX0" type="text" id="clientID-F6pV9" name="clientID" value="123">
+                    </div>
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="clientName-R9uY1">Client Name</label>
+                        <input class="input-H7yX0" type="text" id="clientName-R9uY1" name="clientName" value="nezuko">
+                    </div>
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="clientTele-J4fX3">Client TELE</label>
+                        <input class="input-H7yX0" type="text" id="clientTele-J4fX3" name="clientTele" value="06121321312">
+                    </div>
+                </div>
+            </div>
+            <div class="section-Q2jB7">
+                <h3 class="title-Q2jB7">Apprtement info :</h3>
+                <div class="row-Fk3n9">
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="apparteID-S2kN5">Appatement ID</label>
+                        <input class="input-H7yX0" type="text" id="apparteID-S2kN5" name="appartementID" value="12">
+                    </div>
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="prix1-W9nU8">Prix(DH)</label>
+                        <input class="input-H7yX0" type="text" id="prix1-W9nU8" name="prix" value="3200">
+                    </div>
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="surface-Y3mL6">Surface</label>
+                        <input class="input-H7yX0" type="text" id="surface-Y3mL6" name="surface" value="100">
+                    </div>
+                </div>
+                <div class="row-Fk3n9">
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="ville-A9xP4">Ville</label>
+                        <input class="input-H7yX0" type="text" id="ville-A9xP4" name="ville" value="aga">
+                    </div>
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="quartier1-L2mE7">Quartier</label>
+                        <input class="input-H7yX0" type="text" id="quartier1-L2mE7" name="quartier" value="dadad">
+                    </div>
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="type-B8vJ3">Type</label>
+                        <input class="input-H7yX0" type="text" id="type-B8vJ3" name="type" value="villa">
+                    </div>
+                </div>
+               
+            </div>
+            <div class="section-Q2jB7">
+                <h3 class="title-Q2jB7">Contract :</h3>
+                <div class="row-Fk3n9">
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="dateDebut-M5jU2">date debut</label>
+                        <input class="input-H7yX0" type="date" id="dateDebut-M5jU2" name="dateDebut">
+                    </div>
+                    <div class="input-group-H7yX0">
+                        <label class="label-H7yX0" for="dateFin-D7nR4">date fin</label>
+                        <input class="input-H7yX0" type="date" id="dateFin-D7nR4" name="dateFin">
+                    </div>
+                </div>
+               
+            </div>
+            <div class="form-buttons-R2mL8">
+<div class="form-buttons-R2mL8">
+    <button type="button" class="assign-button-V4qK5" onclick="assignToAppartement()">Assign</button>
+</div>
+            </div>
+        </form>
+    </div>
+    
+    <!--***************************** end assign form ************************************************ -->
+    
+    
+    
+    
+    <script>
+        let formAssignAppartement = document.querySelector(".appartemenst-to-client");
+        let formAddClient = document.querySelector("#add-client");
+
+        let addClientBtn = document.querySelector("header + div button");
+        let [cancelBtn, cancelBtnTwo] = document.querySelectorAll(".cancel");
+        let assignAppartementToClientBtns = document.querySelectorAll(".client-info button");
+
+        cancelBtn.addEventListener("click", () => hideAssignAppartementForm());
+        cancelBtnTwo.addEventListener("click", () => hideAddClientForm());
+        addClientBtn.addEventListener("click", () => showAddClientForm());
+
+        assignAppartementToClientBtns.forEach((btn) => btn.addEventListener("click", () => showAssignAppartementForm()))
+
+        function showAssignAppartementForm() {
+            formAssignAppartement.style.display = "block"
+        }
+        function hideAssignAppartementForm() {
+            formAssignAppartement.style.display = "none"
+        }
+        function showAddClientForm() {
+            formAddClient.style.display = "flex"
+        }
+        function hideAddClientForm() {
+            formAddClient.style.display = "none"
+        }
+        
+        function assign(id , prix , ville , quartier ,type , surface ){
+              
+        
+       appId=id;
+        Gprix=prix;
+         GQ=quartier;
+         GVille=ville;
+         Gtype=type;
+         Gsurface=surface;
+        
+   
+            
+            document.querySelector(".container-5u8Tz").style.display = "block";
+     document.getElementById('clientID-F6pV9').value = SelectedUser;
+          document.getElementById('clientName-R9uY1').value = SelectedUserName;
+               document.getElementById('clientTele-J4fX3').value = SelctedUserTele;
+                    document.getElementById('apparteID-S2kN5').value = appId;
+        document.getElementById('prix1-W9nU8').value = Gprix;
+        document.getElementById('surface-Y3mL6').value = Gsurface;
+        document.getElementById('ville-A9xP4').value = GVille;
+        document.getElementById('quartier1-L2mE7').value = GQ;
+        document.getElementById('type-B8vJ3').value = Gtype;
+        }
+        function UpdateUid(id , firstName , tele){
+            SelectedUser=id;
+            SelectedUserName=firstName;
+            SelctedUserTele=tele;
+            
+        }
+        
+function assignToAppartement() {
+    let clientId = document.getElementById('clientID-F6pV9').value;
+    let appartementId = document.getElementById('apparteID-S2kN5').value;
+    let dateDebut = document.getElementById('dateDebut-M5jU2').value;
+    let dateFin = document.getElementById('dateFin-D7nR4').value;
+
+    // Format the dates to yyyyMMdd
+    dateDebut = formatDate(dateDebut);
+    dateFin = formatDate(dateFin);
+
+    fetch(`/clients/assign?userId=${clientId}&appartementId=${appartementId}&dateDebut=${dateDebut}&dateFin=${dateFin}`, {
+        method: 'GET'
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to assign appartement');
+        }
+    })
+    .then(data => {
+        alert('Appartement assigned successfully');
+ document.querySelector(".container-5u8Tz").style.display = "none";
+        // Optionally handle success, e.g., close the modal or update the UI
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Appartement assigned successfully');
+        document.querySelector(".container-5u8Tz").style.display = "none";
+    });
+}
+
+function formatDate(date) {
+    let d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    let year = d.getFullYear();
+
+    if (month.length < 2) {
+        month = '0' + month;
+    }
+    if (day.length < 2) {
+        day = '0' + day;
+    }
+
+    return `${year}${month}${day}`;
+}
+
+
+        document.querySelector(".update-button").addEventListener("click", () => {
+            const firstName = document.querySelector("#firstName").value;
+            const lastName = document.querySelector("#lastName").value;
+            const phone = document.querySelector("#phone").value;
+            const address = document.querySelector("#address").value;
+            const email = document.querySelector("#email").value;
+
+            fetch(`/clients/add?firstName=${firstName}&lastName=${lastName}&address=${address}&email=${email}&phone=${phone}`)
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    const clientCard = document.createElement("div");
+                    clientCard.classList.add("client");
+                    clientCard.innerHTML = `
+                        <div class="client-card">
+                            <div class="client-img-container">
+                                <img src="./assets/user.png" alt="">
+                            </div>
+                            <div class="client-info">
+                                <div>
+                                    <div class="full-name">${firstName} ${lastName}</div>
+                                    <div>
+                                        <button><img src="./assets/add_32inactive32.png" alt=""></button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="active-rents">
+                                        <span>email : </span>
+                                        <span>${email}</span>
+                                    </div>
+                                    <div class="active-rents">
+                                        <span>tele : </span>
+                                        <span>${phone}</span>
+                                    </div>
+                                    <div class="active-rents">
+                                        <span>addresse : </span>
+                                        <span>${address}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.querySelector(".clients.grid").appendChild(clientCard);
+                    hideAddClientForm();
+                });
+        });
+    </script>
+</body>
+</html>

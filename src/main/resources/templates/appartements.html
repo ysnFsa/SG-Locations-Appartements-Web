@@ -1,16 +1,219 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Appartements</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Open+Sans:wght@400;500;700&family=Roboto:wght@300&family=Work+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap"
+    rel="stylesheet">
+    <title>Les Appartements</title>
 </head>
 <body>
-    <h1>List of Appartements</h1>
-    <ul>
-        <li th:each="appartement : ${appartements}">
-            <span th:text="${appartement.type}">Type</span> - 
-            <span th:text="${appartement.surface}">Surface</span> - 
-            <span th:text="${appartement.prix}">Price</span>
-        </li>
-    </ul>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/appartements" class="active">Appartement</a></li>
+                <li><a href="/clients">Clients</a></li>
+            </ul>   
+        </nav>
+        <div class="settings-icon-container">
+            <img th:src="@{/assets/setting.png}" alt="setting">
+        </div>
+    </header>
+    <div>
+        <button><img src="./assets/add_32inactive32.png" alt="" srcset=""></button>
+    </div>
+<main>
+    
+    
+    <div class="appartements grid" style="--grid-card-size : 250px" id="appartement-grid">
+        <div th:each="appartement : ${appartements}" class="appartement">
+            <a href="appartements/ + ${appartement.id}" style="all: unset;"></a>
+                <div class="appartement-img-container">
+                  <img th:src="@{'/assets/' + ${appartement.photo}}" alt="appartement img">
+
+                </div>
+                <div class="appartement-info">
+                    <div>
+                        <span>prix : </span>
+                        <span th:text="${appartement.prix} + '.dh'">1500.dh</span>
+                    </div>
+                    <div>
+                        <span>surface : </span>
+                        <span th:text="${appartement.surface} + '.m²'">120.m²</span>
+                    </div>
+                    <div>
+                        <span>ville : </span>
+                        <span th:text="${appartement.ville.name}">agadir</span>
+                    </div>
+                    <div>
+                        <span>chambre : </span>
+                        <span th:text="${appartement.chambres}">3</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</main>
+     <form class="add-appartement">
+        <span class="cancel"><span>X</span></span>
+        <div class="appartement-info">
+            <div class="appartement-info-container">
+                <div>
+                    <label for="ville">ville</label>
+                    <select name="ville" id="ville">
+                        <option value="agadir">agadir</option>
+                        <option value="rabat">rabat</option>
+                        <option value="agadir">fes</option>
+                        <option value="rabat">laayoune</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="quartier">quartier</label>
+                    <select name="quartier" id="quartier">
+                        <option value="salam">hay salam</option>
+                        <option value="dakhla">hay dahkla</option>
+                         <option value="adrar">hay el adrar</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="prix">prix</label>
+                    <input type="text" name="prix" id="prix">
+                </div>
+                <div>
+                    <label for="surface">surface</label>
+                    <input type="text" name="surface" id="surface">
+                </div>
+                <div>
+                    <label for="type">type</label>
+                    <select name="type" id="type">
+                        <option value="villa">villa</option>
+                        <option value="studio">studio</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="chambre">chambre</label>
+                    <input type="number" name="chambre" id="chambre">
+                </div>
+            </div>
+            <div>
+                <textarea name="description" id="description" cols="30" rows="10"></textarea>
+            </div>
+            <div>
+                <div>
+                    <label for="furnished">furnished</label>
+                    <input type="checkbox" name="furnished" id="furnished">
+                </div>
+                <div>
+                    <label for="disponible">disponible</label>
+                    <input type="checkbox" name="disponible" id="disponible">
+                </div>
+            </div>
+        </div>
+        <div class="appartement-media">
+            <div>
+                <label for="photo">
+                    <img src="./assets/image.png" alt="" srcset="">
+                </label>
+                <input type="file" name="photo" id="photo">
+            </div>
+        </div>
+    <input type="button" value="ajouter" id="add-appartement-btn">
+    </form>
+    <script>
+        let formAddAppartement = document.querySelector(".add-appartement");
+        let cancelBtn = document.querySelector(".cancel");
+        let addAppartementBtn = document.querySelector("header + div button");
+
+        cancelBtn.addEventListener("click",() => hideAddAppartementForm());
+        addAppartementBtn.addEventListener("click",() => showAddAppartementForm());
+
+        function showAddAppartementForm() {
+            formAddAppartement.style.display = "block"
+        }
+        function hideAddAppartementForm() {
+            formAddAppartement.style.display = "none"
+        }
+        
+  document.querySelector('#add-appartement-btn').addEventListener('click', function() {
+    const ville = document.querySelector('#ville').value;
+    const quartier = document.querySelector('#quartier').value;
+    const prix = document.querySelector('#prix').value;
+    const surface = document.querySelector('#surface').value;
+    const type = document.querySelector('#type').value;
+    const chambre = document.querySelector('#chambre').value;
+    const description = document.querySelector('#description').value;
+    const furnished = document.querySelector('#furnished').checked;
+    const disponible = document.querySelector('#disponible').checked;
+    const photo = document.querySelector('#photo').value.split('\\').pop(); // Get the image name
+
+    const queryString = `ville=${ville}&quartier=${quartier}&prix=${prix}&surface=${surface}&type=${type}&chambre=${chambre}&description=${description}&furnished=${furnished}&disponible=${disponible}&photo=${photo}`;
+
+    fetch(`/appartements/add?${queryString}`, {
+        method: 'GET'
+    })
+    .then(response => response.text())
+    .then(data => {
+        alert(data);
+        addAppartementCard({ ville, quartier, prix, surface, type, chambre, description, furnished, disponible, photo });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+
+function addAppartementCard(appartement) {
+    const grid = document.querySelector('#appartement-grid');
+    const card = document.createElement('div');
+    card.classList.add('appartement');
+
+    card.innerHTML = `
+        <div class="appartement-img-container">
+            <img src="./assets/${appartement.photo}" alt="appartement img">
+        </div>
+        <div class="appartement-info">
+            <div>
+                <span>prix : </span>
+                <span>${appartement.prix} dh</span>
+            </div>
+            <div>
+                <span>surface : </span>
+                <span>${appartement.surface} m²</span>
+            </div>
+            <div>
+                <span>ville : </span>
+                <span>${appartement.ville}</span>
+            </div>
+            <div>
+                <span>chambre : </span>
+                <span>${appartement.chambre}</span>
+            </div>
+            <div>
+                <span>type : </span>
+                <span>${appartement.type}</span>
+            </div>
+            <div>
+                <span>description : </span>
+                <span>${appartement.description}</span>
+            </div>
+            <div>
+                <span>meublée : </span>
+                <span>${appartement.furnished ? 'Oui' : 'Non'}</span>
+            </div>
+            <div>
+                <span>disponible : </span>
+                <span>${appartement.disponible ? 'Oui' : 'Non'}</span>
+            </div>
+        </div>
+    `;
+
+    grid.appendChild(card);
+}
+    </script>
 </body>
 </html>
