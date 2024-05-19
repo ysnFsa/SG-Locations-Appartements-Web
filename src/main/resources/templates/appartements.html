@@ -54,6 +54,10 @@
                         <span>chambre : </span>
                         <span th:text="${appartement.chambres}">3</span>
                     </div>
+                     <div class="buttons-container">
+                        <button class="delete-btn">Delete</button>
+                        <button class="update-btn">Update</button>
+                    </div>
                 </div>
             </a>
         </div>
@@ -124,53 +128,77 @@
         </div>
     <input type="button" value="ajouter" id="add-appartement-btn">
     </form>
+    
+     <div id="delete-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="hideDeleteModal()">&times;</span>
+        <p>Are you sure you want to delete this appartement?</p>
+        <div class="modal-buttons">
+        <button id="confirm-delete" class="confirm-button">Yes</button>
+        <button class="cancel-button">No</button>
+         </div>
+    </div>
+</div>
+
+    
+    
     <script>
-        let formAddAppartement = document.querySelector(".add-appartement");
-        let cancelBtn = document.querySelector(".cancel");
-        let addAppartementBtn = document.querySelector("header + div button");
-
-        cancelBtn.addEventListener("click",() => hideAddAppartementForm());
-        addAppartementBtn.addEventListener("click",() => showAddAppartementForm());
-
-        function showAddAppartementForm() {
-            formAddAppartement.style.display = "block"
-        }
-        function hideAddAppartementForm() {
-            formAddAppartement.style.display = "none"
-        }
         
-  document.querySelector('#add-appartement-btn').addEventListener('click', function() {
-    const ville = document.querySelector('#ville').value;
-    const quartier = document.querySelector('#quartier').value;
-    const prix = document.querySelector('#prix').value;
-    const surface = document.querySelector('#surface').value;
-    const type = document.querySelector('#type').value;
-    const chambre = document.querySelector('#chambre').value;
-    const description = document.querySelector('#description').value;
-    const furnished = document.querySelector('#furnished').checked;
-    const disponible = document.querySelector('#disponible').checked;
-    const photo = document.querySelector('#photo').value.split('\\').pop(); // Get the image name
+    document.addEventListener('DOMContentLoaded', function () {
+    let formAddAppartement = document.querySelector(".add-appartement");
+    let cancelBtn = document.querySelector(".cancel");
+    let addAppartementBtn = document.querySelector("header + div button");
+    const modal = document.getElementById("delete-modal");
+    const closeModal = document.querySelector(".close");
+    const confirmDeleteBtn = document.getElementById("confirm-delete");
+    const cancelDeleteBtn = document.querySelector('.cancel-button');
+    let selectedCard = null;
 
-    const queryString = `ville=${ville}&quartier=${quartier}&prix=${prix}&surface=${surface}&type=${type}&chambre=${chambre}&description=${description}&furnished=${furnished}&disponible=${disponible}&photo=${photo}`;
+    // Show and hide add appartement form
+    cancelBtn.addEventListener("click", () => hideAddAppartementForm());
+    addAppartementBtn.addEventListener("click", () => showAddAppartementForm());
 
-    fetch(`/appartements/add?${queryString}`, {
-        method: 'GET'
-    })
-    .then(response => response.text())
-    .then(data => {
-        alert(data);
-        addAppartementCard({ ville, quartier, prix, surface, type, chambre, description, furnished, disponible, photo });
-    })
-    .catch(error => {
-        console.error('Error:', error);
+    function showAddAppartementForm() {
+        formAddAppartement.style.display = "block";
+    }
+
+    function hideAddAppartementForm() {
+        formAddAppartement.style.display = "none";
+    }
+
+    // Add appartement button click event
+    document.querySelector('#add-appartement-btn').addEventListener('click', function () {
+        const ville = document.querySelector('#ville').value;
+        const quartier = document.querySelector('#quartier').value;
+        const prix = document.querySelector('#prix').value;
+        const surface = document.querySelector('#surface').value;
+        const type = document.querySelector('#type').value;
+        const chambre = document.querySelector('#chambre').value;
+        const description = document.querySelector('#description').value;
+        const furnished = document.querySelector('#furnished').checked;
+        const disponible = document.querySelector('#disponible').checked;
+        const photo = document.querySelector('#photo').value.split('\\').pop(); // Get the image name
+
+        const queryString = `ville=${ville}&quartier=${quartier}&prix=${prix}&surface=${surface}&type=${type}&chambre=${chambre}&description=${description}&furnished=${furnished}&disponible=${disponible}&photo=${photo}`;
+
+        fetch(`/appartements/add?${queryString}`, {
+            method: 'GET'
+        })
+        .then(response => response.text())
+        .then(data => {
+            addAppartementCard({ ville, quartier, prix, surface, type, chambre, description, furnished, disponible, photo });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     });
-});
 
-
+    // Function to add a new appartement card
 function addAppartementCard(appartement) {
     const grid = document.querySelector('#appartement-grid');
     const card = document.createElement('div');
     card.classList.add('appartement');
+    card.setAttribute('data-id', appartement.id); // Assuming id is available
 
     card.innerHTML = `
         <div class="appartement-img-container">
@@ -193,27 +221,75 @@ function addAppartementCard(appartement) {
                 <span>chambre : </span>
                 <span>${appartement.chambre}</span>
             </div>
-            <div>
-                <span>type : </span>
-                <span>${appartement.type}</span>
-            </div>
-            <div>
-                <span>description : </span>
-                <span>${appartement.description}</span>
-            </div>
-            <div>
-                <span>meublée : </span>
-                <span>${appartement.furnished ? 'Oui' : 'Non'}</span>
-            </div>
-            <div>
-                <span>disponible : </span>
-                <span>${appartement.disponible ? 'Oui' : 'Non'}</span>
+            <div class="buttons-container">
+                <button class="delete-btn">Delete</button>
+                <button class="update-btn">Update</button>
             </div>
         </div>
     `;
 
+    card.querySelector('.delete-btn').addEventListener('click', () => showDeleteModal(card));
     grid.appendChild(card);
 }
-    </script>
+
+
+    // Function to show delete modal
+    function showDeleteModal(card) {
+        selectedCard = card;
+        console.log('Showing delete modal for card:', card); // Debugging log
+        modal.style.display = "block";
+    }
+
+    // Modal close functionality
+    closeModal.onclick = function () {
+        hideDeleteModal();
+    }
+
+    cancelDeleteBtn.onclick = function () {
+        hideDeleteModal();
+    }
+
+    function hideDeleteModal() {
+        modal.style.display = "none";
+    }
+
+    confirmDeleteBtn.onclick = function () {
+        const id = selectedCard.getAttribute('data-id');
+        fetch(`/appartements/delete/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Appartement deleted successfully');
+                selectedCard.remove();
+                hideDeleteModal();
+            } else {
+                throw new Error('Failed to delete appartement');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete appartement');
+        });
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            hideDeleteModal();
+        }
+    }
+
+    // Add event listeners to all delete buttons
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const card = this.closest('.appartement');
+            showDeleteModal(card);
+        });
+    });
+});
+
+</script>
+
+    
 </body>
 </html>

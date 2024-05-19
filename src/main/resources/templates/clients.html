@@ -76,13 +76,27 @@
                     <div>
                         <div class="full-name" th:text="${client.firstName} + ' ' + ${client.lastName}">Ismail ER-RAMDANY</div>
                         <div>
-                            
+                            <button><img th:src="@{/assets/wast_basket.png}" alt="delete">
+                                </button>
+                            <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="hideDeleteModal()">&times;</span>
+            <p>Are you sure you want to delete this client?</p>
+            <div class="modal-buttons">
+            <button id="confirm-delete" class="confirm-button">Yes</button>
+            <button onclick="hideDeleteModal()" class="cancel-button">No</button>
+            </div>
+        </div>
+    </div>
+
       <button 
     th:data-client-id="${client.id}" 
     th:data-client-firstname="${client.firstName}" 
     th:data-client-tele="${client.tele}">
     <img th:src="@{/assets/add_32inactive32.png}" alt="Add">
 </button>
+                            
                         </div>
                     </div>
                     <div>
@@ -145,23 +159,23 @@
     <form action="#" id="add-client" class="container">
         <span class="cancel"><span>X</span></span>
         <label for="firstName">FirstName</label>
-        <input type="text" id="firstName" name="firstName" value="Fatima Ezzahra">
+        <input type="text" id="firstName" name="firstName" value="">
 
         <label for="lastName">LastName</label>
-        <input type="text" id="lastName" name="lastName" value="BOULOUIZ">
+        <input type="text" id="lastName" name="lastName" value="">
 
         <label for="phone">Phone</label>
-        <input type="text" id="phone" name="phone" value="0631077311">
+        <input type="text" id="phone" name="phone" value="">
 
         <label for="address">Adresse</label>
-        <input type="text" id="address" name="address" value="attadamone">
+        <input type="text" id="address" name="address" value="">
 
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" value="fz.blz.2019@gmail.com">
+        <input type="email" id="email" name="email" value="">
 
         <div class="form-buttons">
             <button type="button" class="cancel-button" style="display: none;">Cancel</button>
-            <button type="button" class="update-button">Update</button>
+            <button type="button" class="update-button">Add</button>
         </div>
     </form>
     
@@ -169,25 +183,25 @@
     <form class="assign-appartemenst-to-client container">
         <span class="cancel"><span>X</span></span>
         <label for="firstName">FirstName</label>
-        <input disabled type="text" id="firstName" name="firstName" value="Fatima Ezzahra">
+        <input disabled type="text" id="firstName" name="firstName" value="">
 
         <label for="lastName">LastName</label>
-        <input disabled type="text" id="lastName" name="lastName" value="BOULOUIZ">
+        <input disabled type="text" id="lastName" name="lastName" value="">
 
         <label for="phone">Phone</label>
-        <input disabled type="text" id="phone" name="phone" value="0631077311">
+        <input disabled type="text" id="phone" name="phone" value="">
 
         <label for="address">Adresse</label>
-        <input disabled type="text" id="address" name="address" value="attadamone">
+        <input disabled type="text" id="address" name="address" value="">
 
         <label for="email">Email</label>
-        <input disabled type="email" id="email" name="email" value="fz.blz.2019@gmail.com">
+        <input disabled type="email" id="email" name="email" value="">
 
         <label for="prix">prix</label>
-        <input disabled type="text" id="prix" name="prix" value="234">
+        <input disabled type="text" id="prix" name="prix" value="">
         
         <label for="surface">surface</label>
-        <input disabled type="text" id="surface" name="surface" value="80">
+        <input disabled type="text" id="surface" name="surface" value="">
 
         <label for="ville">ville</label>
         <input disabled type="text" id="ville" name="ville" value="dakhla">
@@ -202,7 +216,7 @@
         <input type="date" name="from" id="from">
 
         <div class="form-buttons">
-            <button type="submit" class="update-button">Update</button>
+            <button type="submit" class="update-button">Add</button>
         </div>
     </form>
     
@@ -287,157 +301,253 @@
     
     
     <script>
-        let formAssignAppartement = document.querySelector(".appartemenst-to-client");
-        let formAddClient = document.querySelector("#add-client");
-
-        let addClientBtn = document.querySelector("header + div button");
-        let [cancelBtn, cancelBtnTwo] = document.querySelectorAll(".cancel");
-        let assignAppartementToClientBtns = document.querySelectorAll(".client-info button");
-
-        cancelBtn.addEventListener("click", () => hideAssignAppartementForm());
-        cancelBtnTwo.addEventListener("click", () => hideAddClientForm());
-        addClientBtn.addEventListener("click", () => showAddClientForm());
-
-        assignAppartementToClientBtns.forEach((btn) => btn.addEventListener("click", () => showAssignAppartementForm()))
-
-        function showAssignAppartementForm() {
-            formAssignAppartement.style.display = "block"
-        }
-        function hideAssignAppartementForm() {
-            formAssignAppartement.style.display = "none"
-        }
-        function showAddClientForm() {
-            formAddClient.style.display = "flex"
-        }
-        function hideAddClientForm() {
-            formAddClient.style.display = "none"
-        }
-        
-        function assign(id , prix , ville , quartier ,type , surface ){
-              
-        
-       appId=id;
-        Gprix=prix;
-         GQ=quartier;
-         GVille=ville;
-         Gtype=type;
-         Gsurface=surface;
-        
    
+    const formAssignAppartement = document.querySelector(".appartemenst-to-client");
+    const formAddClient = document.querySelector("#add-client");
+    const addClientBtn = document.querySelector("header + div button");
+    const [cancelBtn, cancelBtnTwo] = document.querySelectorAll(".cancel");
+    const assignAppartementToClientBtns = document.querySelectorAll(".client-info button[data-client-id]");
+    const deleteBtns = document.querySelectorAll(".delete-button");
+    const deleteOptions = document.querySelectorAll(".delete-option");
+
+    
+    cancelBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        hideAssignAppartementForm();
+    });
+    cancelBtnTwo.addEventListener("click", (event) => {
+        event.stopPropagation();
+        hideAddClientForm();
+    });
+    addClientBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        showAddClientForm();
+    });
+
+    
+    assignAppartementToClientBtns.forEach(btn => {
+        btn.addEventListener("click", event => {
+            event.stopPropagation(); // Prevent event bubbling
+            showAssignAppartementForm(event);
+        });
+    });
+
+    
+    deleteBtns.forEach(btn => {
+        btn.addEventListener("click", event => {
+            event.stopPropagation(); // Prevent event bubbling
             
-            document.querySelector(".container-5u8Tz").style.display = "block";
-     document.getElementById('clientID-F6pV9').value = SelectedUser;
-          document.getElementById('clientName-R9uY1').value = SelectedUserName;
-               document.getElementById('clientTele-J4fX3').value = SelctedUserTele;
-                    document.getElementById('apparteID-S2kN5').value = appId;
+        });
+    });
+
+    deleteOptions.forEach(option => {
+        option.addEventListener("click", event => {
+            event.stopPropagation(); // Prevent event bubbling
+            
+        });
+    });
+
+    
+    function showAssignAppartementForm(event) {
+        event.stopPropagation(); // Prevent event bubbling
+        const button = event.currentTarget;
+        SelectedUser = button.getAttribute('data-client-id');
+        SelectedUserName = button.getAttribute('data-client-firstname');
+        SelectedUserTele = button.getAttribute('data-client-tele');
+
+       
+        document.getElementById('clientID-F6pV9').value = SelectedUser;
+        document.getElementById('clientName-R9uY1').value = SelectedUserName;
+        document.getElementById('clientTele-J4fX3').value = SelectedUserTele;
+
+        formAssignAppartement.style.display = "block";
+    }
+
+    
+    function hideAssignAppartementForm() {
+        formAssignAppartement.style.display = "none";
+    }
+
+    
+    function showAddClientForm() {
+        formAddClient.style.display = "flex";
+    }
+
+    
+    function hideAddClientForm() {
+        formAddClient.style.display = "none";
+    }
+
+   
+    function assign(id, prix, ville, quartier, type, surface) {
+        appId = id;
+        Gprix = prix;
+        GQ = quartier;
+        GVille = ville;
+        Gtype = type;
+        Gsurface = surface;
+
+        document.getElementById('apparteID-S2kN5').value = appId;
         document.getElementById('prix1-W9nU8').value = Gprix;
         document.getElementById('surface-Y3mL6').value = Gsurface;
         document.getElementById('ville-A9xP4').value = GVille;
         document.getElementById('quartier1-L2mE7').value = GQ;
         document.getElementById('type-B8vJ3').value = Gtype;
-        }
-        function UpdateUid(id , firstName , tele){
-            SelectedUser=id;
-            SelectedUserName=firstName;
-            SelctedUserTele=tele;
-            
-        }
-        
-function assignToAppartement() {
-    let clientId = document.getElementById('clientID-F6pV9').value;
-    let appartementId = document.getElementById('apparteID-S2kN5').value;
-    let dateDebut = document.getElementById('dateDebut-M5jU2').value;
-    let dateFin = document.getElementById('dateFin-D7nR4').value;
 
-    // Format the dates to yyyyMMdd
-    dateDebut = formatDate(dateDebut);
-    dateFin = formatDate(dateFin);
-
-    fetch(`/clients/assign?userId=${clientId}&appartementId=${appartementId}&dateDebut=${dateDebut}&dateFin=${dateFin}`, {
-        method: 'GET'
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Failed to assign appartement');
-        }
-    })
-    .then(data => {
-        alert('Appartement assigned successfully');
- document.querySelector(".container-5u8Tz").style.display = "none";
-        // Optionally handle success, e.g., close the modal or update the UI
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Appartement assigned successfully');
-        document.querySelector(".container-5u8Tz").style.display = "none";
-    });
-}
-
-function formatDate(date) {
-    let d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
-    let year = d.getFullYear();
-
-    if (month.length < 2) {
-        month = '0' + month;
-    }
-    if (day.length < 2) {
-        day = '0' + day;
+        formAssignAppartement.style.display = "block";
     }
 
-    return `${year}${month}${day}`;
-}
+    
+    function UpdateUid(id, firstName, tele) {
+        SelectedUser = id;
+        SelectedUserName = firstName;
+        SelectedUserTele = tele;
+    }
 
+   
+    function formatDate(date) {
+        const d = new Date(date);
+        const month = ('0' + (d.getMonth() + 1)).slice(-2);
+        const day = ('0' + d.getDate()).slice(-2);
+        const year = d.getFullYear();
 
-        document.querySelector(".update-button").addEventListener("click", () => {
-            const firstName = document.querySelector("#firstName").value;
-            const lastName = document.querySelector("#lastName").value;
-            const phone = document.querySelector("#phone").value;
-            const address = document.querySelector("#address").value;
-            const email = document.querySelector("#email").value;
+        return `${year}${month}${day}`;
+    }
 
-            fetch(`/clients/add?firstName=${firstName}&lastName=${lastName}&address=${address}&email=${email}&phone=${phone}`)
-                .then(response => response.text())
-                .then(data => {
-                    console.log(data);
-                    const clientCard = document.createElement("div");
-                    clientCard.classList.add("client");
-                    clientCard.innerHTML = `
-                        <div class="client-card">
-                            <div class="client-img-container">
-                                <img src="./assets/user.png" alt="">
-                            </div>
-                            <div class="client-info">
+    
+    function assignToAppartement() {
+        const clientId = document.getElementById('clientID-F6pV9').value;
+        const appartementId = document.getElementById('apparteID-S2kN5').value;
+        let dateDebut = document.getElementById('dateDebut-M5jU2').value;
+        let dateFin = document.getElementById('dateFin-D7nR4').value;
+
+        dateDebut = formatDate(dateDebut);
+        dateFin = formatDate(dateFin);
+
+        fetch(`/clients/assign?userId=${clientId}&appartementId=${appartementId}&dateDebut=${dateDebut}&dateFin=${dateFin}`, {
+            method: 'GET'
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to assign appartement');
+            }
+        })
+        .then(data => {
+            alert('Appartement assigned successfully');
+            formAssignAppartement.style.display = "none";
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to assign appartement');
+            formAssignAppartement.style.display = "none";
+        });
+    }
+
+    
+    document.querySelector(".update-button").addEventListener("click", () => {
+        const firstName = document.querySelector("#firstName").value;
+        const lastName = document.querySelector("#lastName").value;
+        const phone = document.querySelector("#phone").value;
+        const address = document.querySelector("#address").value;
+        const email = document.querySelector("#email").value;
+
+        fetch(`/clients/add?firstName=${firstName}&lastName=${lastName}&address=${address}&email=${email}&phone=${phone}`)
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                const clientCard = document.createElement("div");
+                clientCard.classList.add("client");
+                clientCard.innerHTML = `
+                    <div class="client-card">
+                        <div class="client-img-container">
+                            <img src="./assets/user.png" alt="">
+                        </div>
+                        <div class="client-info">
+                            <div>
+                                <div class="full-name">${firstName} ${lastName}</div>
                                 <div>
-                                    <div class="full-name">${firstName} ${lastName}</div>
-                                    <div>
-                                        <button><img src="./assets/add_32inactive32.png" alt=""></button>
-                                    </div>
+                                    <button data-client-id="${data.id}" data-client-firstname="${firstName}" data-client-tele="${phone}"><img src="./assets/add_32inactive32.png" alt=""></button>
                                 </div>
-                                <div>
-                                    <div class="active-rents">
-                                        <span>email : </span>
-                                        <span>${email}</span>
-                                    </div>
-                                    <div class="active-rents">
-                                        <span>tele : </span>
-                                        <span>${phone}</span>
-                                    </div>
-                                    <div class="active-rents">
-                                        <span>addresse : </span>
-                                        <span>${address}</span>
-                                    </div>
+                            </div>
+                            <div>
+                                <div class="active-rents">
+                                    <span>email : </span>
+                                    <span>${email}</span>
+                                </div>
+                                <div class="active-rents">
+                                    <span>tele : </span>
+                                    <span>${phone}</span>
+                                </div>
+                                <div class="active-rents">
+                                    <span>addresse : </span>
+                                    <span>${address}</span>
                                 </div>
                             </div>
                         </div>
-                    `;
-                    document.querySelector(".clients.grid").appendChild(clientCard);
-                    hideAddClientForm();
-                });
+                    </div>
+                `;
+                document.querySelector(".clients.grid").appendChild(clientCard);
+                hideAddClientForm();
+                clientCard.querySelector("button[data-client-id]").addEventListener("click", event => showAssignAppartementForm(event));
+            });
+    });
+</script>
+    <script>
+        let selectedClientId = -1;
+        function showDeleteModal(clientId) {
+            selectedClientId = clientId;
+            document.getElementById('delete-modal').style.display = 'block';
+        }
+
+        function hideDeleteModal() {
+            selectedClientId = -1;
+            document.getElementById('delete-modal').style.display = 'none';
+        }
+
+        document.getElementById('confirm-delete').addEventListener('click', (event) => {
+    event.stopPropagation(); // Prevents the event from bubbling up
+    if (selectedClientId !== -1) {
+        fetch(`/clients/delete?clientId=${selectedClientId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Client deleted successfully');
+                document.querySelector(`.client[data-client-id="${selectedClientId}"]`).remove();
+            } else {
+                throw new Error('Failed to delete client');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete client');
+        })
+        .finally(() => {
+            hideDeleteModal();
         });
+    }
+});
+
+document.querySelectorAll('.cancel-button').forEach(button => {
+    button.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevents the event from bubbling up
+        hideDeleteModal();
+    });
+});
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.client-card button img[alt="delete"]').forEach(button => {
+        const clientId = button.closest('.client').getAttribute('data-client-id');
+        button.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevents the event from bubbling up
+            showDeleteModal(clientId);
+        });
+    });
+});
+
     </script>
 </body>
 </html>
