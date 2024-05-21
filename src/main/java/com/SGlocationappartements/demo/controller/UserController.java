@@ -32,7 +32,7 @@ public class UserController {
         List<Appartement> appartements = appartementService.getAllAppartements();
         model.addAttribute("users", users);
         model.addAttribute("appartements", appartements);
-        return "clients"; // Refers to clients.html in src/main/resources/templates
+        return "clients"; 
     }
 
     @GetMapping("/{id}")

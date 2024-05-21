@@ -22,7 +22,7 @@ public class Contrat {
     @Column(name = "id_client", nullable = false)
     private int idClient;
 
-    // Getters and Setters
+  
     public Long getId() {
         return id;
     }

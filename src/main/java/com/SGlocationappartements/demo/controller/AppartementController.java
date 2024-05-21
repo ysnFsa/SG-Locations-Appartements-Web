@@ -1,12 +1,16 @@
 package com.SGlocationappartements.demo.controller;
 
+
 import com.SGlocationappartements.demo.entity.Appartement;
+import com.SGlocationappartements.demo.entity.AppartementDTO;
 import com.SGlocationappartements.demo.entity.Quartier;
 import com.SGlocationappartements.demo.entity.Ville;
 import com.SGlocationappartements.demo.service.AppartementService;
 import com.SGlocationappartements.demo.service.QuartierService;
 import com.SGlocationappartements.demo.service.VilleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +41,27 @@ public class AppartementController {
     @GetMapping("/{id}")
     public Optional<Appartement> getAppartementById(@PathVariable Long id) {
         return appartementService.getAppartementById(id);
+    }
+
+    @GetMapping("/{id}/json")
+    @ResponseBody
+    public ResponseEntity<AppartementDTO> getAppartementByIdAsJson(@PathVariable Long id) {
+        Optional<Appartement> appartement = appartementService.getAppartementById(id);
+        return appartement.map(app -> {
+            AppartementDTO dto = new AppartementDTO();
+            dto.setId(app.getId());
+            dto.setType(app.getType());
+            dto.setDescription(app.getDescription());
+            dto.setSurface(app.getSurface());
+            dto.setChambres(app.getChambres());
+            dto.setDisponibilite(app.isDisponibilite());
+            dto.setMeublee(app.isMeublee());
+            dto.setPrix(app.getPrix());
+            dto.setVilleName(app.getVille().getName());
+            dto.setQuartierName(app.getQuartier().getName());
+            dto.setPhoto(app.getPhoto());
+            return ResponseEntity.ok(dto);
+        }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping("/add")
@@ -71,22 +96,48 @@ public class AppartementController {
         return "redirect:/appartements";
     }
 
-    @PutMapping("/{id}")
-    public String updateAppartement(@PathVariable Long id, @ModelAttribute Appartement appartement) {
-        appartement.setId(id);
-        if (appartementService.updateAppartement(appartement)) {
-            return "redirect:/appartements";
-        } else {
-            return "redirect:/appartements";
-        }
+    @GetMapping("/update")
+    public String updateAppartement(@RequestParam Long id,
+                                    @RequestParam String ville,
+                                    @RequestParam String quartier,
+                                    @RequestParam float prix,
+                                    @RequestParam float surface,
+                                    @RequestParam String type,
+                                    @RequestParam int chambre,
+                                    @RequestParam String description,
+                                    @RequestParam boolean furnished,
+                                    @RequestParam boolean disponible,
+                                    @RequestParam String photo) {
+        Ville villeEntity = villeService.getVilleByName(ville)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid ville name"));
+        Quartier quartierEntity = quartierService.getQuartierByName(quartier)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid quartier name"));
+
+        Appartement appartement = appartementService.getAppartementById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid appartement ID"));
+        
+        appartement.setVille(villeEntity);
+        appartement.setQuartier(quartierEntity);
+        appartement.setPrix(prix);
+        appartement.setSurface(surface);
+        appartement.setType(type);
+        appartement.setChambres(chambre);
+        appartement.setDescription(description);
+        appartement.setMeublee(furnished);
+        appartement.setDisponibilite(disponible);
+        appartement.setPhoto(photo);
+
+        appartementService.updateAppartement(appartement);
+        return "redirect:/appartements";
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteAppartement(@PathVariable Long id) {
+    @DeleteMapping("/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<Void> deleteAppartement(@PathVariable Long id) {
         if (appartementService.deleteAppartement(id)) {
-            return "redirect:/appartements";
+            return ResponseEntity.noContent().build();
         } else {
-            return "redirect:/appartements";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

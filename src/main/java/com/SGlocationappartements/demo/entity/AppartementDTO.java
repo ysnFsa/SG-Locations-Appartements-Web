@@ -1,58 +1,35 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.SGlocationappartements.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+/**
+ *
+ * @author yassin
+ */
 
-@Entity
-@Table(name = "appartement")
-public class Appartement {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AppartementDTO {
     private Long id;
-
-    @Column(name = "type", nullable = false)
     private String type;
-
-    @Column(name = "description")
     private String description;
-
-    @Column(name = "surface", nullable = false)
     private float surface;
-
-    @Column(name = "chambres", nullable = false)
     private int chambres;
-
-    @Column(name = "disponibilite", nullable = false)
     private boolean disponibilite;
-
-    @Column(name = "meublee", nullable = false)
     private boolean meublee;
-
-    @Column(name = "prix", nullable = false)
     private float prix;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ville_id")
-        @JsonIgnoreProperties({"appartements"})
-
-    private Ville ville;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "quartier_id")
-        @JsonIgnoreProperties({"appartements"})
-
-    private Quartier quartier;
-
-    @Column(name = "photo")
+    private String villeName;
+    private String quartierName;
     private String photo;
 
+ 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -112,20 +89,20 @@ public class Appartement {
         this.prix = prix;
     }
 
-    public Ville getVille() {
-        return ville;
+    public String getVilleName() {
+        return villeName;
     }
 
-    public void setVille(Ville ville) {
-        this.ville = ville;
+    public void setVilleName(String villeName) {
+        this.villeName = villeName;
     }
 
-    public Quartier getQuartier() {
-        return quartier;
+    public String getQuartierName() {
+        return quartierName;
     }
 
-    public void setQuartier(Quartier quartier) {
-        this.quartier = quartier;
+    public void setQuartierName(String quartierName) {
+        this.quartierName = quartierName;
     }
 
     public String getPhoto() {

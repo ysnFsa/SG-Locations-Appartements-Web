@@ -1,5 +1,6 @@
 package com.SGlocationappartements.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -14,14 +15,15 @@ public class Quartier {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "quartier", fetch = FetchType.LAZY)
+   @OneToMany(mappedBy = "quartier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Appartement> appartements;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_ville")
     private Ville ville;
 
-    // Getters and Setters
+   
     public Long getId() {
         return id;
     }

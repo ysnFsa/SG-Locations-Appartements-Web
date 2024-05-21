@@ -1,31 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.SGlocationappartements.demo.entity;
 
-/**
- *
- * @author yassin
- */
-
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "admin")
 public class Admin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "passwd", nullable = false)
     private String passwd;
 
-    // Getters and setters
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
+
+
+
     public Long getId() {
         return id;
     }
@@ -48,5 +43,13 @@ public class Admin {
 
     public void setPasswd(String passwd) {
         this.passwd = passwd;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

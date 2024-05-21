@@ -25,7 +25,7 @@ public class Photos {
     @JoinColumn(name = "appartement_id")
     private Appartement appartement;
 
-    // Getters and setters
+
 
     public Long getId() {
         return id;
