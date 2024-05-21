@@ -20,7 +20,7 @@
                 <li><a href="/clients" class="active">Clients</a></li>
             </ul>
         </nav>
-        <div class="settings-icon-container">
+        <div class="settings-icon-container"  onclick="showAccountSettingsModal()">
             <img th:src="@{/assets/setting.png}" alt="setting">
         </div>
     </header>
@@ -31,7 +31,7 @@
         
         let SelectedUser=-1;
         let SelectedUserName="";
-        let SelctedUserTele=""
+        let SelctedUserTele="";
         let appId=-1;
         let Gprix=-1;
         let GQ="";
@@ -41,7 +41,6 @@
         
         
     </script>
-    
     <script>
         function setOnClickHandlers() {
             document.querySelectorAll('[data-client-id]').forEach(button => {
@@ -65,10 +64,9 @@
         document.addEventListener('DOMContentLoaded', setOnClickHandlers);
     </script>
     
-    
-    <div class="clients grid" style="--grid-card-size : 400px">
-        <div th:each="client : ${users}" class="client">
-            <div class="client-card">
+   <div class="clients grid" style="--grid-card-size : 400px">
+        <div th:id="'client_' + ${client.id}" th:each="client : ${users}" class="client">
+            <div  class="client-card">
                 <div class="client-img-container">
                     <img th:src="@{/assets/user.png}" alt="">
                 </div>
@@ -76,7 +74,8 @@
                     <div>
                         <div class="full-name" th:text="${client.firstName} + ' ' + ${client.lastName}">Ismail ER-RAMDANY</div>
                         <div>
-                            <button><img th:src="@{/assets/wast_basket.png}" alt="delete">
+                            <button><img th:src="@{/assets/wast_basket.png}" th:attr="onclick='DeleteUser(' + ${client.id} + ')'" alt="delete">
+                                                                           
                                 </button>
                             <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="modal" style="display: none;">
@@ -224,6 +223,7 @@
     
     <div class="container-5u8Tz container">
         <form action="#">
+             <span class="cancel" onclick="hideAssign()"><span>X</span></span>
             <div class="section-Q2jB7">
                 <h3 class="title-Q2jB7">Client info :</h3>
                 <div class="row-Fk3n9">
@@ -297,7 +297,8 @@
     
     <!--***************************** end assign form ************************************************ -->
     
-    
+        <iframe id="modalIframe" src="setting.html" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1000;"></iframe>
+
     
     
     <script>
@@ -378,23 +379,30 @@
         formAddClient.style.display = "none";
     }
 
-   
+   function hideAssign(){
+        document.querySelector(".container-5u8Tz").style.display = "none";
+   }
     function assign(id, prix, ville, quartier, type, surface) {
-        appId = id;
-        Gprix = prix;
-        GQ = quartier;
-        GVille = ville;
-        Gtype = type;
-        Gsurface = surface;
-
-        document.getElementById('apparteID-S2kN5').value = appId;
+   
+       appId=id;
+        Gprix=prix;
+         GQ=quartier;
+         GVille=ville;
+         Gtype=type;
+         Gsurface=surface;
+        
+   
+            
+            document.querySelector(".container-5u8Tz").style.display = "block";
+     document.getElementById('clientID-F6pV9').value = SelectedUser;
+          document.getElementById('clientName-R9uY1').value = SelectedUserName;
+               document.getElementById('clientTele-J4fX3').value = SelctedUserTele;
+                    document.getElementById('apparteID-S2kN5').value = appId;
         document.getElementById('prix1-W9nU8').value = Gprix;
         document.getElementById('surface-Y3mL6').value = Gsurface;
         document.getElementById('ville-A9xP4').value = GVille;
         document.getElementById('quartier1-L2mE7').value = GQ;
         document.getElementById('type-B8vJ3').value = Gtype;
-
-        formAssignAppartement.style.display = "block";
     }
 
     
@@ -424,25 +432,23 @@
         dateDebut = formatDate(dateDebut);
         dateFin = formatDate(dateFin);
 
-        fetch(`/clients/assign?userId=${clientId}&appartementId=${appartementId}&dateDebut=${dateDebut}&dateFin=${dateFin}`, {
-            method: 'GET'
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Failed to assign appartement');
-            }
-        })
-        .then(data => {
+    fetch(`/clients/assign?userId=${clientId}&appartementId=${appartementId}&dateDebut=${dateDebut}&dateFin=${dateFin}`, {
+     method: 'GET'
+    })
+    .then(response => {
+        if (response.ok) {
             alert('Appartement assigned successfully');
             formAssignAppartement.style.display = "none";
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to assign appartement');
-            formAssignAppartement.style.display = "none";
+        } else {
+            throw new Error('Failed to assign appartement');
+        }   
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to assign appartement');
+        formAssignAppartement.style.display = "none";
         });
+
     }
 
     
@@ -495,40 +501,36 @@
     });
 </script>
     <script>
-        let selectedClientId = -1;
-        function showDeleteModal(clientId) {
-            selectedClientId = clientId;
-            document.getElementById('delete-modal').style.display = 'block';
-        }
-
-        function hideDeleteModal() {
-            selectedClientId = -1;
-            document.getElementById('delete-modal').style.display = 'none';
-        }
-
-        document.getElementById('confirm-delete').addEventListener('click', (event) => {
-    event.stopPropagation(); // Prevents the event from bubbling up
-    if (selectedClientId !== -1) {
-        fetch(`/clients/delete?clientId=${selectedClientId}`, {
+        function DeleteUser(clientId) {
+        
+    document.getElementById('delete-modal').style.display = 'block';
+    document.getElementById('confirm-delete').onclick = function(event) {
+        event.stopPropagation(); // Prevents the event from bubbling up
+        fetch(`/clients/${clientId}`, {
             method: 'DELETE'
         })
         .then(response => {
             if (response.ok) {
-                alert('Client deleted successfully');
-                document.querySelector(`.client[data-client-id="${selectedClientId}"]`).remove();
+               
+               document.getElementById(`client_${clientId}`).remove();
             } else {
                 throw new Error('Failed to delete client');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Failed to delete client');
+         
+                document.getElementById(`client_${clientId}`).remove();
         })
         .finally(() => {
             hideDeleteModal();
         });
-    }
-});
+    };
+}
+
+function hideDeleteModal() {
+    document.getElementById('delete-modal').style.display = 'none';
+}
 
 document.querySelectorAll('.cancel-button').forEach(button => {
     button.addEventListener('click', (event) => {
@@ -538,16 +540,9 @@ document.querySelectorAll('.cancel-button').forEach(button => {
 });
 
 
-        document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.client-card button img[alt="delete"]').forEach(button => {
-        const clientId = button.closest('.client').getAttribute('data-client-id');
-        button.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevents the event from bubbling up
-            showDeleteModal(clientId);
-        });
-    });
-});
-
+function showAccountSettingsModal() {
+            document.getElementById('modalIframe').style.display = 'block';
+        }
     </script>
 </body>
 </html>

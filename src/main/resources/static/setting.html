@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Account Settings</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <style>
+        .modal-container-XYZ987ABC {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-box-XYZ987ABC {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+            position: relative; /* Make this relative to contain the logout button */
+        }
+
+        .modal-image-XYZ987ABC {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .modal-title-XYZ987ABC {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .modal-form-XYZ987ABC {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .modal-input-group-XYZ987ABC {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .modal-label-XYZ987ABC {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+            text-align: left;
+        }
+
+        .modal-input-XYZ987ABC {
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .modal-button-container-XYZ987ABC {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .modal-cancel-button-XYZ987ABC, .modal-save-button-XYZ987ABC {
+            width: 45%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .modal-cancel-button-XYZ987ABC {
+            background-color: #6c757d;
+        }
+
+        .modal-save-button-XYZ987ABC {
+            background-color: #28a745;
+        }
+
+        .modal-cancel-button-XYZ987ABC:hover {
+            background-color: #5a6268;
+        }
+
+        .modal-save-button-XYZ987ABC:hover {
+            background-color: #218838;
+        }
+        
+        .logout-button-ABC123XYZ {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-button-ABC123XYZ:hover {
+            background-color: #c82333;
+        }
+    </style>
+    <div class="modal-container-XYZ987ABC">
+        <div class="modal-box-XYZ987ABC">
+            <button class="logout-button-ABC123XYZ" onclick="logout()">Logout</button>
+            <img src="/assets/loginAv.png" alt="Account Settings Image" class="modal-image-XYZ987ABC">
+            <h2 class="modal-title-XYZ987ABC">Account Settings</h2>
+            <form id="updatePasswordForm" class="modal-form-XYZ987ABC">
+                <div class="modal-input-group-XYZ987ABC">
+                    <label for="username" class="modal-label-XYZ987ABC">Username</label>
+                    <input value="admin" type="text" id="username" name="username" class="modal-input-XYZ987ABC" disabled>
+                </div>
+                <div class="modal-input-group-XYZ987ABC">
+                    <label for="password" class="modal-label-XYZ987ABC">Password</label>
+                    <input type="password" id="password" name="password" class="modal-input-XYZ987ABC" required>
+                </div>
+                <div class="modal-input-group-XYZ987ABC">
+                    <label for="newPassword" class="modal-label-XYZ987ABC">New Password</label>
+                    <input type="password" id="newPassword" name="newPassword" class="modal-input-XYZ987ABC">
+                </div>
+                <div class="modal-input-group-XYZ987ABC">
+                    <label for="confirmPassword" class="modal-label-XYZ987ABC">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="modal-input-XYZ987ABC">
+                </div>
+                <div class="modal-button-container-XYZ987ABC">
+                    <button type="button" class="modal-cancel-button-XYZ987ABC" onclick="hideAccountSettingsModal()">Cancel</button>
+                    <button type="submit" class="modal-save-button-XYZ987ABC">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function hideAccountSettingsModal() {
+            parent.document.getElementById('modalIframe').style.display = 'none';
+        }
+        function logout() {
+            window.location.href = '/logout';
+        }
+
+        document.getElementById('updatePasswordForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const newPassword = formData.get('newPassword');
+            const confirmPassword = formData.get('confirmPassword');
+
+            if (newPassword !== confirmPassword) {
+                alert('New Password and Confirm Password do not match.');
+                return;
+            }
+
+            fetch('/updatePassword', {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    currentPassword: formData.get('password'),
+                    newPassword: newPassword
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Password updated successfully');
+                    hideAccountSettingsModal();
+                } else {
+                    alert('Failed to update password');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
